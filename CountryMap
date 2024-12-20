@@ -35,3 +35,23 @@ public void loadMap(String inputFile) {
         routes[city2][city1] = time;
     }
 }
+//reads content from the file
+    private String readFile(String fileName) {
+        String content = "";
+        java.util.Scanner scanner = null;
+        scanner = new java.util.Scanner(new java.io.File(fileName));
+        while (scanner.hasNextLine()) {
+            content += scanner.nextLine() + "\n";
+        }
+        scanner.close();
+        return content.trim();
+    }
+//get city's index by it's name
+public int getCityIndex(String name) {
+        for (int i = 0; i < cityNames.length; i++) {
+            if (cityNames[i].equals(name)) {
+                return i;
+            }
+        }
+        return -1;
+    }
