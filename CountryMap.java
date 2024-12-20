@@ -48,6 +48,7 @@ public int getCityIndex(String name) {
         }
         return -1;
     }
+    //adding getters
    public int[][] getRoutes() {
         return routes;
     }
