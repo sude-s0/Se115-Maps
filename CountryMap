@@ -5,13 +5,6 @@ class CountryMap {
     private int cityCount;
     private int routeCount; 
 
- public void loadMap(String inputFile) {
-        String[] lines = readFile(inputFile).split("\n");
-        cityCount = Integer.parseInt(lines[0]);
-        cityNames = lines[1].split(" ");
-        routeCount = Integer.parseInt(lines[2]);
-        routes = new int[cityCount][cityCount];
-
 //reads the files and categorizes properties like city names , routes etc
 public void loadMap(String inputFile) { 
     String[] lines = readFile(inputFile).split("\n");
@@ -55,3 +48,11 @@ public int getCityIndex(String name) {
         }
         return -1;
     }
+   public int[][] getRoutes() {
+        return routes;
+    }
+
+    public String[] getCityNames() {
+        return cityNames;
+    }
+}
