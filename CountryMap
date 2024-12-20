@@ -1,4 +1,4 @@
-class CountryMap {
+public class CountryMap {
 //defining the variables
     private String[] cityNames;
     private int[][] routes;
