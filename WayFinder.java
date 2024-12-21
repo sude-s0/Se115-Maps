@@ -1,9 +1,18 @@
-class WayFinder {
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WayFinder {
     private int[] shortestPath;
     private int totalTime;
+
     public void findShortestPath(int[][] routes, String[] cityNames, String startCity, String endCity) {
         int start = getCityIndex(cityNames, startCity);
         int end = getCityIndex(cityNames, endCity);
+
+        if (start == -1 || end == -1) {
+            System.out.println("Error: Invalid city name(s) provided.");
+            return;
+        }
 
         int cityCount = cityNames.length;
         boolean[] visited = new boolean[cityCount];
@@ -33,30 +42,40 @@ class WayFinder {
         }
 
         totalTime = distances[end];
-        buildPath(previous, start, end);
-    }
-//this funtion allows us to find the closest city
-private int findClosestCity(int[] distances, boolean[] visited) {
-    int minDist = Integer.MAX_VALUE;
-    int minCity = -1;
-    for (int i = 0; i < distances.length; i++) {
-        if (!visited[i] && distances[i] < minDist) {
-            minDist = distances[i];
-            minCity = i;
-        }
-    }
-    return minCity;
-}
-    private void buildPath(int[] previous, int start, int end) {
-        java.util.Stack<Integer> stack = new java.util.Stack<>();
-        for (int at = end; at != -1; at = previous[at]) {
-            stack.push(at);
+        if (totalTime == Integer.MAX_VALUE) {
+            System.out.println("No path exists between " + startCity + " and " + endCity + ".");
+            totalTime = -1;
+            return;
         }
 
-        shortestPath = new int[stack.size()];
-        int i = 0;
-        while (!stack.isEmpty()) {
-            shortestPath[i++] = stack.pop();
+        buildPath(previous, end);
+    }
+
+    private int findClosestCity(int[] distances, boolean[] visited) {
+        int minDist = Integer.MAX_VALUE;
+        int minCity = -1;
+        for (int i = 0; i < distances.length; i++) {
+            if (!visited[i] && distances[i] < minDist) {
+                minDist = distances[i];
+                minCity = i;
+            }
+        }
+        return minCity;
+    }
+
+    private void buildPath(int[] previous, int end) {
+        int[] tempPath = new int[previous.length];
+        int pathLength = 0;
+
+        // Saving the route in the opposite way
+        for (int i = end; i != -1; i = previous[i]) {
+            tempPath[pathLength++] = i;
+        }
+
+        // Turning the route on the right side
+        shortestPath = new int[pathLength];
+        for (int i = 0; i < pathLength; i++) {
+            shortestPath[i] = tempPath[pathLength - 1 - i];
         }
     }
 
@@ -70,14 +89,17 @@ private int findClosestCity(int[] distances, boolean[] visited) {
     }
 
     public void writeResult(String outputFile, String[] cityNames) {
-        java.io.PrintWriter writer = null;
-        writer = new java.io.PrintWriter(outputFile);
-        writer.print("Fastest Way: ");
-        for (int i = 0; i < shortestPath.length; i++) {
-            writer.print(cityNames[shortestPath[i]]);
-            if (i < shortestPath.length - 1) writer.print(" -> ");
+        try {
+            FileWriter writer = new FileWriter(outputFile);
+            writer.write("Fastest Way: ");
+            for (int i = 0; i < shortestPath.length; i++) {
+                writer.write(cityNames[shortestPath[i]]);
+                if (i < shortestPath.length - 1) writer.write(" -> ");
+            }
+            writer.write("\nTotal Time: " + totalTime + " min");
+            writer.close();
+        } catch (IOException exception) {
+            System.out.println("An error occurred while writing the file: " + exception.getMessage());
         }
-        writer.println("\nTotal Time: " + totalTime + " min");
-        writer.close();
     }
 }
