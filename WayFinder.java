@@ -4,7 +4,8 @@ import java.io.IOException;
 public class WayFinder {
     private int[] shortestPath;
     private int totalTime;
-
+    
+// Dijkstra algoritması kullanıldı
     public void findShortestPath(int[][] routes, String[] cityNames, String startCity, String endCity) {
         int start = getCityIndex(cityNames, startCity);
         int end = getCityIndex(cityNames, endCity);
