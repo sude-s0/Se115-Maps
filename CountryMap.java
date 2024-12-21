@@ -1,46 +1,47 @@
+import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
 public class CountryMap {
-//defining the variables
     private String[] cityNames;
     private int[][] routes;
     private int cityCount;
-    private int routeCount; 
+    private int routeCount;
 
-//reads the files and categorizes properties like city names , routes etc
-public void loadMap(String inputFile) { 
-    String[] lines = readFile(inputFile).split("\n");
-    cityCount = Integer.parseInt(lines[0]);
-    cityNames = lines[1].split(" ");
-    routeCount = Integer.parseInt(lines[2]);
-    routes = new int[cityCount][cityCount];
+    public void loadMap(String inputFile) {
+        String[] lines = readFile(inputFile).split("\n");
+        cityCount = Integer.parseInt(lines[0]);
+        cityNames = lines[1].split(" ");
+        routeCount = Integer.parseInt(lines[2]);
+        routes = new int[cityCount][cityCount];
 
-    for (int i = 0; i < cityCount; i++) {
-        for (int j = 0; j < cityCount; j++) {
-            routes[i][j] = Integer.MAX_VALUE;
+        for (int i = 0; i < cityCount; i++) {
+            for (int j = 0; j < cityCount; j++) {
+                routes[i][j] = Integer.MAX_VALUE;
+            }
+        }
+
+        for (int i = 0; i < routeCount; i++) {
+            String[] route = lines[3 + i].split(" ");
+            int city1 = getCityIndex(route[0]);
+            int city2 = getCityIndex(route[1]);
+            int time = Integer.parseInt(route[2]);
+            routes[city1][city2] = time;
+            routes[city2][city1] = time;
         }
     }
-
-    for (int i = 0; i < routeCount; i++) {
-        String[] route = lines[3 + i].split(" ");
-        int city1 = getCityIndex(route[0]);
-        int city2 = getCityIndex(route[1]);
-        int time = Integer.parseInt(route[2]);
-        routes[city1][city2] = time;
-        routes[city2][city1] = time;
-    }
-}
-//reads content from the file
-    private String readFile(String fileName) {
+    public String readFile(String fileName) {
         String content = "";
-        java.util.Scanner scanner = null;
-        scanner = new java.util.Scanner(new java.io.File(fileName));
-        while (scanner.hasNextLine()) {
-            content += scanner.nextLine() + "\n";
+        try (Scanner scanner = new Scanner(new File(fileName))) {
+            while (scanner.hasNextLine()) {
+                content += scanner.nextLine() + "\n";
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
         }
-        scanner.close();
         return content.trim();
-    }
-//get city's index by it's name
-public int getCityIndex(String name) {
+}
+
+    public int getCityIndex(String name) {
         for (int i = 0; i < cityNames.length; i++) {
             if (cityNames[i].equals(name)) {
                 return i;
@@ -48,8 +49,8 @@ public int getCityIndex(String name) {
         }
         return -1;
     }
-    //adding getters
-   public int[][] getRoutes() {
+
+    public int[][] getRoutes() {
         return routes;
     }
 
