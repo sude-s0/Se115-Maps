@@ -47,3 +47,37 @@ private int findClosestCity(int[] distances, boolean[] visited) {
     }
     return minCity;
 }
+    private void buildPath(int[] previous, int start, int end) {
+        java.util.Stack<Integer> stack = new java.util.Stack<>();
+        for (int at = end; at != -1; at = previous[at]) {
+            stack.push(at);
+        }
+
+        shortestPath = new int[stack.size()];
+        int i = 0;
+        while (!stack.isEmpty()) {
+            shortestPath[i++] = stack.pop();
+        }
+    }
+
+    private int getCityIndex(String[] cityNames, String city) {
+        for (int i = 0; i < cityNames.length; i++) {
+            if (cityNames[i].equals(city)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void writeResult(String outputFile, String[] cityNames) {
+        java.io.PrintWriter writer = null;
+        writer = new java.io.PrintWriter(outputFile);
+        writer.print("Fastest Way: ");
+        for (int i = 0; i < shortestPath.length; i++) {
+            writer.print(cityNames[shortestPath[i]]);
+            if (i < shortestPath.length - 1) writer.print(" -> ");
+        }
+        writer.println("\nTotal Time: " + totalTime + " min");
+        writer.close();
+    }
+}
