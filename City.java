@@ -1,5 +1,5 @@
 public class City {
-    private String name;
+    private String name; // Şehir ismini tutan değişken
 
     public City(String name) {
         this.name = name;
