@@ -2,15 +2,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class WayFinder {
-    private int[] shortestPath;
-    private int totalTime;
+    private int[] shortestPath; //En kısa yolun indexi
+    private int totalTime; //Toplam süre
     
 // Dijkstra algoritması kullanıldı
     public void findShortestPath(int[][] routes, String[] cityNames, String startCity, String endCity) {
-        int start = getCityIndex(cityNames, startCity);
-        int end = getCityIndex(cityNames, endCity);
+        int start = getCityIndex(cityNames, startCity); //Başlangıç şehrinin indexi
+        int end = getCityIndex(cityNames, endCity); //Bitiş şehrinin indexi
 
-        if (start == -1 || end == -1) {
+        if (start == -1 || end == -1) { //Geçersiz şehir ismi girilirse diye kontrol
             System.out.println("Error: Invalid city name(s) provided.");
             return;
         }
@@ -24,17 +24,17 @@ public class WayFinder {
             distances[i] = Integer.MAX_VALUE;
             previous[i] = -1;
         }
-        distances[start] = 0;
+        distances[start] = 0; //Başlangıç şehrinin mesafesi 0
 
         for (int i = 0; i < cityCount; i++) {
-            int currentCity = findClosestCity(distances, visited);
+            int currentCity = findClosestCity(distances, visited); //En yakın şehri bul
             if (currentCity == -1) break;
 
             visited[currentCity] = true;
             for (int neighbor = 0; neighbor < cityCount; neighbor++) {
                 if (routes[currentCity][neighbor] != Integer.MAX_VALUE && !visited[neighbor]) {
                     int newDist = distances[currentCity] + routes[currentCity][neighbor];
-                    if (newDist < distances[neighbor]) {
+                    if (newDist < distances[neighbor]) { //Daha kısa bir yol bulunduysa
                         distances[neighbor] = newDist;
                         previous[neighbor] = currentCity;
                     }
@@ -42,21 +42,21 @@ public class WayFinder {
             }
         }
 
-        totalTime = distances[end];
+        totalTime = distances[end]; // Bitiş şehrine olan toplam süre
         if (totalTime == Integer.MAX_VALUE) {
             System.out.println("No path exists between " + startCity + " and " + endCity + ".");
             totalTime = -1;
             return;
         }
 
-        buildPath(previous, end);
+        buildPath(previous, end); //En kısa yolu oluştur
     }
 
     private int findClosestCity(int[] distances, boolean[] visited) {
         int minDist = Integer.MAX_VALUE;
         int minCity = -1;
         for (int i = 0; i < distances.length; i++) {
-            if (!visited[i] && distances[i] < minDist) {
+            if (!visited[i] && distances[i] < minDist) { // Ziyaret edilmemiş en kısa mesafeli şehir
                 minDist = distances[i];
                 minCity = i;
             }
@@ -68,12 +68,11 @@ public class WayFinder {
         int[] tempPath = new int[previous.length];
         int pathLength = 0;
 
-        // Saving the route in the opposite way
+        // Yolu ters sırayla kaydeder
         for (int i = end; i != -1; i = previous[i]) {
             tempPath[pathLength++] = i;
         }
-
-        // Turning the route on the right side
+        // Yolu doğru sıraya çevirir
         shortestPath = new int[pathLength];
         for (int i = 0; i < pathLength; i++) {
             shortestPath[i] = tempPath[pathLength - 1 - i];
@@ -86,19 +85,19 @@ public class WayFinder {
                 return i;
             }
         }
-        return -1;
+        return -1; // Şehir bulunamadıysa -1 döndürür
     }
 
     public void writeResult(String outputFile, String[] cityNames) {
         try {
-            FileWriter writer = new FileWriter(outputFile);
+            FileWriter writer = new FileWriter(outputFile); // Çıktı dosyasını açar
             writer.write("Fastest Way: ");
             for (int i = 0; i < shortestPath.length; i++) {
-                writer.write(cityNames[shortestPath[i]]);
+                writer.write(cityNames[shortestPath[i]]); // Şehir isimlerini yazar
                 if (i < shortestPath.length - 1) writer.write(" -> ");
             }
-            writer.write("\nTotal Time: " + totalTime + " min");
-            writer.close();
+            writer.write("\nTotal Time: " + totalTime + " min");  // Toplam süreyi yazar
+            writer.close(); // Dosyayı kapatır
         } catch (IOException exception) {
             System.out.println("An error occurred while writing the file: " + exception.getMessage());
         }
